@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>5 букв - Поиск слов</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        function updateMask() {
+            const maskFields = document.querySelectorAll('.mask-input');
+            const mask = Array.from(maskFields).map(field => field.value || '*').join('');
+            document.getElementById('mask').value = mask;
+        }
+
+        function setupMaskInputs() {
+            const maskFields = document.querySelectorAll('.mask-input');
+
+            maskFields.forEach(field => {
+                field.addEventListener('input', (event) => {
+                    if (event.target.value.length > 1) {
+                        event.target.value = event.target.value.slice(-1);
+                    }
+                    updateMask();
+                });
+
+                field.addEventListener('blur', (event) => {
+                    if (!event.target.value) {
+                        event.target.value = '*';
+                        updateMask();
+                    }
+                });
+
+                field.addEventListener('focus', (event) => {
+                    event.target.select();
+                });
+            });
+        }
+
+        window.onload = setupMaskInputs;
+    </script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>5 букв - Поиск слов</h1>
+    </header>
+
+    <section class="form-section">
+        <form th:action="@{/words}" method="post">
+            <div class="form-group">
+                <label for="mask">Маска (* для любой буквы):</label>
+                <div class="mask-container">
+                    <input class="mask-input" type="text" maxlength="1" th:value="${maskChars[0]}" required>
+                    <input class="mask-input" type="text" maxlength="1" th:value="${maskChars[1]}" required>
+                    <input class="mask-input" type="text" maxlength="1" th:value="${maskChars[2]}" required>
+                    <input class="mask-input" type="text" maxlength="1" th:value="${maskChars[3]}" required>
+                    <input class="mask-input" type="text" maxlength="1" th:value="${maskChars[4]}" required>
+                </div>
+                <input type="hidden" id="mask" name="mask" th:value="${mask}"/>
+            </div>
+
+            <div class="form-group">
+                <label for="positive">Обязательные буквы (подряд слитно):</label>
+                <input type="text" id="positive" name="positive" th:value="${positive}"
+                       placeholder="Введите обязательные буквы">
+            </div>
+
+            <div class="form-group">
+                <label for="negative">Исключенные буквы (подряд слитно):</label>
+                <input type="text" id="negative" name="negative" th:value="${negative}"
+                       placeholder="Введите исключенные буквы">
+            </div>
+
+            <button type="submit">Искать</button>
+        </form>
+    </section>
+
+    <section class="results-section" th:if="${results}">
+        <h2>Результаты:</h2>
+        <ul>
+            <li th:each="word : ${results}" th:text="${word.word}">Слово</li>
+        </ul>
+    </section>
+</div>
+</body>
+</html>

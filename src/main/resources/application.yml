@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: five-letters-solver
+
+  datasource:
+    url: jdbc:h2:file:./data/five_letters_solver_db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db.changelog-master.xml
+
+server:
+  port: 8082
